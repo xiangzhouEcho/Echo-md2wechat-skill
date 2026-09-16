@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.wechat.html
+.selftest_out/
+md2wechat.json
+config.json
