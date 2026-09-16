@@ -20,15 +20,19 @@
 
 依赖由 [uv](https://github.com/astral-sh/uv) 按脚本内联声明自动安装，无需手动 `pip install`。
 
+在**你的 Markdown 文件所在目录**运行，用**绝对路径**调用脚本（不要 cd 进 skill 目录，否则输入文件名会相对到错的位置）：
+
 ```bash
+SKILL=~/.claude/skills/echo-md2wechat-skill/scripts/md2wechat.py
+
 # 渲染 + 复制到剪贴板（默认，免凭据）→ 打开公众号编辑器 Cmd+V
-uv run scripts/md2wechat.py article.md
+uv run "$SKILL" article.md
 
 # 换主题并在浏览器预览
-uv run scripts/md2wechat.py article.md --theme elegant --open
+uv run "$SKILL" article.md --theme elegant --open
 
 # 一键建草稿（需凭据）
-uv run scripts/md2wechat.py article.md --draft --cover cover.png
+uv run "$SKILL" article.md --draft --cover cover.png
 ```
 
 在 Agent 里直接说「把这篇 markdown 排版发到公众号」并给出文件即可自动触发。

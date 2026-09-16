@@ -20,15 +20,19 @@ The core idea: **local rendering, no paid formatting service**. The WeChat edito
 
 Dependencies are declared inline (PEP 723) and installed automatically by [uv](https://github.com/astral-sh/uv) — no manual `pip install`.
 
+Run from **the directory where your Markdown lives**, invoking the script by **absolute path** (do not `cd` into the skill dir, or the input filename resolves to the wrong place):
+
 ```bash
+SKILL=~/.claude/skills/echo-md2wechat-skill/scripts/md2wechat.py
+
 # Render + copy to clipboard (default, no credentials) → paste with Cmd+V in the editor
-uv run scripts/md2wechat.py article.md
+uv run "$SKILL" article.md
 
 # Pick a theme and preview in the browser
-uv run scripts/md2wechat.py article.md --theme elegant --open
+uv run "$SKILL" article.md --theme elegant --open
 
 # One-shot draft (requires credentials)
-uv run scripts/md2wechat.py article.md --draft --cover cover.png
+uv run "$SKILL" article.md --draft --cover cover.png
 ```
 
 Inside an agent, just say "format this markdown and publish it to my WeChat account" with the file — the skill triggers automatically.

@@ -25,18 +25,22 @@ description: Use when publishing a Markdown file to a WeChat Official Account (�
 
 ## Quick Start
 
-**执行位置**：下列命令用相对路径 `scripts/...`，须先 `cd` 到本 SKILL.md 所在目录（本机安装为 `~/.claude/skills/echo-md2wechat-skill`）再运行；或把 `scripts/` 换成该目录的绝对路径。依赖由 uv 按脚本内联声明自动安装，无需手动 pip。
+**执行位置（重要）**：在**你的 Markdown 文件所在目录**运行，并用**绝对路径**调用脚本——这样输入文件用相对名即可正确解析，脚本依赖也能就位。不要 `cd` 进 skill 目录（那会让 `article.md` 相对到 skill 目录而找不到）。本机脚本绝对路径为 `~/.claude/skills/echo-md2wechat-skill/scripts/md2wechat.py`。依赖由 uv 按脚本内联声明自动安装，无需手动 pip。
 
 ```bash
+SKILL=~/.claude/skills/echo-md2wechat-skill/scripts/md2wechat.py
+
 # 渲染并复制到剪贴板（默认，免凭据）——然后去公众号编辑器 Cmd+V
-uv run scripts/md2wechat.py article.md
+uv run "$SKILL" article.md
 
 # 选主题 + 浏览器预览
-uv run scripts/md2wechat.py article.md --theme elegant --open
+uv run "$SKILL" article.md --theme elegant --open
 
 # 一键建草稿（需 AppID/AppSecret + IP 白名单）
-uv run scripts/md2wechat.py article.md --draft --cover cover.png
+uv run "$SKILL" article.md --draft --cover cover.png
 ```
+
+输入文件与 `--cover`、`--out` 都相对于你当前所在目录（即 md 文件目录），不是 skill 目录。
 
 ## Options
 
@@ -81,5 +85,5 @@ Markdown 顶部可选 YAML：`title`、`author`、`digest`（摘要，缺省取�
 ## Verify
 
 ```bash
-uv run scripts/selftest.py   # 离线自检，零网络
+uv run ~/.claude/skills/echo-md2wechat-skill/scripts/selftest.py   # 离线自检，零网络
 ```
