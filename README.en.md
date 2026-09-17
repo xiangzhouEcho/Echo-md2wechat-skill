@@ -105,6 +105,14 @@ uv run scripts/selftest.py   # offline, no network
 | Draft error `ip not in whitelist` | Add your public IP to the backend whitelist, or set `WECHAT_PROXY_URL` |
 | Draft error: no cover | Use `--cover`, set frontmatter `cover:`, or include an image in the body |
 
+## Echo WeChat Skill Family
+
+Three skills form a pipeline: **search → download → format & publish**.
+
+- [Echo-wechat-search-skill](https://github.com/xiangzhouEcho/Echo-wechat-search-skill) — search Official-Account articles by keyword, pipe straight to download
+- [Echo-wechat-skill](https://github.com/xiangzhouEcho/Echo-wechat-skill) — download articles without a certificate (single/album/batch; md/html/pdf + images/video/audio)
+- [Echo-md2wechat-skill](https://github.com/xiangzhouEcho/Echo-md2wechat-skill) — format & publish Markdown to WeChat (inline CSS + clipboard + draft API) · this repo
+
 ## License
 
 MIT © xiangzhouEcho

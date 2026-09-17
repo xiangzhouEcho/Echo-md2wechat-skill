@@ -105,6 +105,14 @@ uv run scripts/selftest.py   # 离线，零网络
 | 草稿报 `ip not in whitelist` | 把公网 IP 加入后台白名单，或配 `WECHAT_PROXY_URL` |
 | 草稿报无封面 | `--cover` 指定 / frontmatter 写 `cover:` / 正文含图 |
 
+## Echo 微信技能族
+
+三个技能可组成流水线：**搜索 → 下载 → 排版发布**。
+
+- [Echo-wechat-search-skill](https://github.com/xiangzhouEcho/Echo-wechat-search-skill) — 关键词搜索公众号文章，可一键串联下载
+- [Echo-wechat-skill](https://github.com/xiangzhouEcho/Echo-wechat-skill) — 免证书下载文章（单篇/合集/批量，md/html/pdf + 图片/视频/音频）
+- [Echo-md2wechat-skill](https://github.com/xiangzhouEcho/Echo-md2wechat-skill) — Markdown 排版发布到公众号（内联样式 + 剪贴板 + 草稿 API） · 本仓库
+
 ## License
 
 MIT © xiangzhouEcho
