@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import base64
+import mimetypes
 import re
+from pathlib import Path
 from urllib.parse import urlparse
 
 import markdown as mdlib
@@ -156,6 +159,26 @@ def _extract_title(soup: BeautifulSoup, body: str) -> str:
         if line.startswith("#"):
             return line.lstrip("#").strip()
     return "未命名文章"
+
+
+def embed_local_images(html: str, base_dir: Path) -> tuple[str, int, list[str]]:
+    soup = BeautifulSoup(html, "html.parser")
+    embedded = 0
+    missing: list[str] = []
+    for img in soup.find_all("img"):
+        src = img.get("src", "")
+        if not src or src.startswith(("http://", "https://", "data:")):
+            continue
+        path = Path(src) if Path(src).is_absolute() else (base_dir / src)
+        path = path.expanduser()
+        if not path.is_file():
+            missing.append(src)
+            continue
+        mime = mimetypes.guess_type(str(path))[0] or "image/jpeg"
+        data = base64.b64encode(path.read_bytes()).decode()
+        img["src"] = f"data:{mime};base64,{data}"
+        embedded += 1
+    return str(soup), embedded, missing
 
 
 def iter_images(html: str) -> list[str]:

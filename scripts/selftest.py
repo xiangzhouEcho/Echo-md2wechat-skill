@@ -93,6 +93,15 @@ def main():
     cfg = wechat_api.load_config()
     check(set(cfg.keys()) == {"appid", "secret", "proxy_url"}, "配置加载返回预期字段")
 
+    import tempfile
+    tmpd = Path(tempfile.mkdtemp(prefix="wxembed_"))
+    (tmpd / "pics").mkdir()
+    png = bytes.fromhex("89504e470d0a1a0a0000000d494844520000000100000001080600000037") + b"\x00" * 20
+    (tmpd / "pics" / "demo.png").write_bytes(png)
+    emb, n, missing = renderer.embed_local_images(r["html"], tmpd)
+    check(n == 1 and "data:image/png;base64," in emb, "本地图片内嵌为 base64 data URI")
+    check("pics/demo.png" not in emb, "内嵌后不再有本地相对路径")
+
     no_cite = renderer.render_markdown(FIXTURE, citations=False)["html"]
     check("参考链接" not in no_cite, "--no-citations 关闭底部参考")
 

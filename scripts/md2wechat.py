@@ -12,9 +12,9 @@
 from __future__ import annotations
 
 import argparse
-import binascii
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import renderer
@@ -25,8 +25,13 @@ import wechat_api
 def copy_html_to_clipboard(html: str) -> bool:
     if sys.platform != "darwin":
         return False
-    hexdata = binascii.hexlify(html.encode("utf-8")).decode()
-    script = f"set the clipboard to «data HTML{hexdata}»"
+    tmp = Path(tempfile.gettempdir()) / "echo_md2wechat_clip.html"
+    try:
+        tmp.write_text(html, encoding="utf-8")
+    except OSError:
+        return False
+    posix = str(tmp).replace('"', '\\"')
+    script = f'set the clipboard to (read (POSIX file "{posix}") as «class HTML»)'
     try:
         r = subprocess.run(["osascript", "-e", script], capture_output=True, text=True, timeout=30)
     except (OSError, subprocess.SubprocessError):
@@ -53,6 +58,13 @@ def do_render(md_path: Path, args) -> dict:
         result["author"] = args.author
     if args.cover:
         result["cover"] = args.cover
+    if not args.no_embed_images and not args.draft:
+        embedded_html, n, missing = renderer.embed_local_images(result["html"], md_path.parent)
+        result["html"] = embedded_html
+        if n:
+            print(f"✓ 已内嵌 {n} 张本地图片为 base64（粘贴时微信会自动上传）")
+        for m in missing:
+            print(f"! 找不到本地图片，已跳过: {m}", file=sys.stderr)
     out_path = Path(args.out) if args.out else md_path.with_suffix(".wechat.html")
     out_path.write_text(_standalone(result["html"], result["title"]), encoding="utf-8")
     result["out_path"] = out_path
@@ -120,6 +132,7 @@ def main(argv=None):
     ap.add_argument("--no-citations", action="store_true", help="不把外链转成底部参考")
     ap.add_argument("--out", help="输出 HTML 路径 (默认与输入同名 .wechat.html)")
     ap.add_argument("--no-copy", action="store_true", help="不复制到剪贴板")
+    ap.add_argument("--no-embed-images", action="store_true", help="不把本地图片内嵌为 base64")
     ap.add_argument("--open", action="store_true", help="渲染后用浏览器打开")
     ap.add_argument("--draft", action="store_true", help="调用官方 API 创建草稿 (需凭据)")
     ap.add_argument("--cover", help="封面图路径或 URL (建草稿用)")
